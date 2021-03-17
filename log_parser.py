@@ -107,7 +107,6 @@ class Log:
             log_type -- name specifying header style
             encoding -- encoding of the file. (default="utf8")
         """
-
         self.__encoding = "utf8"
 
         # Enforce log_type to exist in log_start_format.
@@ -144,7 +143,8 @@ class Log:
         """Generate the regex for finding data in columns."""
         return re.compile(
             rf"""
-            ([-\d.\+Ee]+)       # Any number (with decimal, negative, exp)
+            ([-\d.\+Ee]*)       # Any (or no) number (with decimal,
+                                # negative, exp)
             [{{{delim}}}\r\n]   # Numbers could run against the
                                 #   delimiter or a new line.
             """, re.VERBOSE)
@@ -393,6 +393,10 @@ class Log:
 
                 # Read each column of data.
                 data = data_format.findall(line)
+
+                # Replace any empty values (whitespace or '') (i.e.
+                # from a csv) with NaN.
+                data = [d if d.strip() else 'nan' for d in data]
 
                 # The first time that the loop makes it to here, names
                 # will be empty. Assume that the names are given in the
