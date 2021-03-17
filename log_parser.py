@@ -345,6 +345,7 @@ class Log:
             # Read the first line.
             line = file.readline()
             last_line = ''
+            is_stop = False
             # The list of column names will be filled in the loop.
             names = []
             # Initialize the data structure. Notes is the only known
@@ -357,6 +358,8 @@ class Log:
                 }
             while line:
                 # While the line is non-empty
+                if is_stop:
+                    break
                 if file.tell() == stop:
                     # Quit if at cutoff. file.tell() returns an
                     # 'opaque' number not necessarily related to
@@ -364,7 +367,9 @@ class Log:
                     # https://docs.python.org/3/library/
                     # io.html#io.TextIOBase.tell
                     #
-                    break
+                    # This is a delayed action, the break happens at
+                    # next iteration.
+                    is_stop = True
 
                 # Gatekeeper:
                 #
