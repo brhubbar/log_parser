@@ -133,7 +133,7 @@ class Log:
         """Generate the regex for finding data column headers."""
         return re.compile(
             rf"""
-            ([\w]+)                 # Any word (alphanumeric)
+            ([\w\s]+)               # Any word (alphanumeric)
             \s*                     # There might be a space...
             [{{{delim}}}\[\(\r\n]   # Labels could run against '('
                                     #   '[', '\r', '\n', or delim
@@ -408,7 +408,8 @@ class Log:
                 # previous line. Prep this after parsing the data into
                 # a list so the number of data points can be checked.
                 if not names:
-                    names = tuple(name_format.findall(last_line))
+                    names = tuple(name.strip() for name in
+                                  name_format.findall(last_line))
                     # Store the number of named pieces of data.
                     n_names = len(names)
                     # Add storage for any excess data.
