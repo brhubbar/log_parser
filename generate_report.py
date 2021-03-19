@@ -285,6 +285,7 @@ pattern_variables = re.compile(
     r'''
     (?:                 # Start of group
      (?P<name>[\w\s]+)  # Variable name (group 1 = name)
+
      (?P<tests>         # Test number callout (group 2 = tests)
       \(                # Opening parenthesis
       (?:               # Uncaptured group - possible repeating #, ...
@@ -293,6 +294,14 @@ pattern_variables = re.compile(
       \s*\d+\s*         # final number, no trailing comma.
       \)                # Closing paerenthesis
      )?                 # May or may not include (#, ...)
+
+     (?P<scale>         # Scaling factor (group 3 = scale)
+      \[                # Opening square bracket
+      \s*[-\d.\+Ee]+\s* # Single number with possible sign, decimal,
+                        #     exponent.
+      \]                # Closing square bracket
+     )?                 # May or may not include [#]
+
     ),?                 # End of group, may or may not be trailed by
                         # comma.
     ''', re.VERBOSE)
