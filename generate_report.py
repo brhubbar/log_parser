@@ -116,7 +116,7 @@ def generate_report(log, savepath, reportname="report.md"):
     #   x and y data.
     for info in plot_info:
         fig, ax = plt.subplots()
-        x_key = info['variables']['x']
+        x_key = info['variables']['x']['name']
 
         for y in info['variables']['y']:
             y_key = y['name']
