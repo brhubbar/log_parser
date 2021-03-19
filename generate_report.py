@@ -241,30 +241,29 @@ def extract_vars(callout):
                         Tuple of test indices.
 
     """
+    # Identify variable groups and read into a list. Each variable
+    # callout has three components - name, test numbers to plot from,
+    # and a scaling factor. These are stored in a dictionary for each
+    # match of pattern_variables.
     variables = pattern_variables.finditer(callout['vars'])
-    # Pull variable names.
-    # X variable comes first; uses test number for the y variable,
-    # so only store the name.
-    x_key = next(variables).groupdict()['name'].strip()
+    variables = [v.groupdict() for v in variables]
 
-    # Store the name and tests to be used for each y variable.
-    y_dict = [y.groupdict() for y in variables]
-    # Clean up contents of y_dict so they're useful to the rest of the
-    # world.
-    for y in y_dict:
+    # Clean up/interpret variable information.
+    for v in variables:
         # Clean up variable names.
-        y['name'] = y['name'].strip()
+        v['name'] = v['name'].strip()
 
         # Convert test numbers from a string to a tuple.
         # re.findall() can't handle a None, so replace with an
         # empty string. This results in y['tests']=()
-        if not y['tests']:
-            y['tests'] = ''
+        if not v['tests']:
+            v['tests'] = ''
         # Identify numbers and store in a tuple.
-        y_tests = tuple(int(n) for n in re.findall(r'\d+', y['tests']))
-        y.update({'tests': y_tests})
+        v_tests = tuple(int(n) for n in re.findall(r'\d+', v['tests']))
+        v.update({'tests': v_tests})
 
-    return {'x': x_key, 'y': y_dict}
+    # The first value is the x variable. The rest are y variables.
+    return {'x': variables.pop(0), 'y': variables}
 
 
 # Detect plot callout.
