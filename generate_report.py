@@ -262,6 +262,13 @@ def extract_vars(callout):
         v_tests = tuple(int(n) for n in re.findall(r'\d+', v['tests']))
         v.update({'tests': v_tests})
 
+        # Identify scaling factors.
+        if v['scale']:
+            # Scaling factor is a single number inside square brackets.
+            v['scale'] = float(v['scale'].strip('[]'))
+        else:
+            v['scale'] = 1
+
     # The first value is the x variable. The rest are y variables.
     return {'x': variables.pop(0), 'y': variables}
 
