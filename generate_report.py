@@ -110,18 +110,22 @@ def generate_report(log, savepath, reportname="report.md"):
                                            ))
 
     # Generate plots. This is a very nested sequence.
-    # - For each requested figure, find the x variable's key.
-    # - For each y variable, find the y variable's key.
+    # - For each requested figure, find the x variable's key and scale.
+    # - For each y variable, find the y variable's key and scale factor.
     # - For each requested curve of said y variable (test_idx), plot the
     #   x and y data.
     for info in plot_info:
         fig, ax = plt.subplots()
         x_key = info['variables']['x']['name']
+        x_scale = info['variables']['x']['scale']
 
         for y in info['variables']['y']:
             y_key = y['name']
+            y_scale = y['scale']
             for test_idx in y['tests']:
-                ax.plot(data[test_idx][x_key], data[test_idx][y_key],
+                x_data = [x * x_scale for x in data[test_idx][x_key]]
+                y_data = [y * y_scale for y in data[test_idx][y_key]]
+                ax.plot(x_data, y_data,
                         marker='*',
                         markersize=2,
                         label=f"{y_key} : Test {test_idx}",
