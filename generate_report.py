@@ -123,6 +123,7 @@ def generate_report(log, savepath, reportname="report.md"):
             for test_idx in y['tests']:
                 ax.plot(data[test_idx][x_key], data[test_idx][y_key],
                         marker='*',
+                        markersize=2,
                         label=f"{y_key} : Test {test_idx}",
                         )
         ax.set_xlabel(info['labels']['xlabel'])
@@ -182,7 +183,7 @@ def add_to_report(text, file, default_tests):
         # Markdown gets confused by spaces, so use percent-encoding.
         savename = savename.replace(' ', '%20')
         # Replace callout with markdown link.
-        text = pattern_callout.sub(f"![|400]({savename})", text, count=1)
+        text = pattern_callout.sub(f"![]({savename})", text, count=1)
 
         # Find the next callout.
         callout = pattern_callout.search(text)
