@@ -87,7 +87,10 @@ def generate_report(log, savepath, reportname="report.md"):
     data = []
     # Open the report markdown file, ensuring that it'll be closed when
     # all is said and done. Truncate (overwrite) the report file.
-    with open(os.path.join(savepath, reportname), 'w') as report_file:
+    with open(os.path.join(savepath, reportname),
+              'w',
+              encoding='utf-8',
+              ) as report_file:
         # Print the log's header information and make note of the
         # requested plots.
         plot_info.extend(add_to_report(log.header,
