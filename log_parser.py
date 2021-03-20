@@ -91,23 +91,40 @@ class Log:
     Finds all individual logs within the file upon initialization,
     allowing for on-demand collection of data from those logs.
 
-    Arguments
-    ---------
-        filepath -- Name of the file to read from.
-        log_type -- Name of log header style.
     """
 
     def __init__(self, filepath, log_type, encoding="utf8"):
         """
         Parse the file for logs and return self to query the file.
 
-        Inputs
+        Parameters
+        ----------
+        filepath : str
+            Path to the logfile, including extension.
+        log_type : TYPE
+            Name specifying header style.
+
+        Keyword Arugments
+        -----------------
+        encoding : str, optional
+            File encoding for reading and writing. The default is
+            "utf8".
+        is_save_non_data_output : bool, optional
+            Indicate whether non-numerical outut in the log (i.e. below
+            the column headers) should be saved as Notes. The default
+            is False.
+
+        Raises
         ------
-            filepath -- path to the logfile, including extension
-            log_type -- name specifying header style
-            encoding -- encoding of the file. (default="utf8")
+        ValueError
+            log_type must be one of a limited set of values.
+
+        Returns
+        -------
+        None.
+
         """
-        self.__encoding = "utf8"
+        self.__encoding = encoding
 
         # Enforce log_type to exist in log_start_format.
         log_type = log_type.lower()
