@@ -97,7 +97,10 @@ class Log:
         log_type -- Name of log header style.
     """
 
-    def __init__(self, filepath, log_type, encoding="utf8"):
+    def __init__(self, filepath, log_type, *,
+                 encoding="utf8",
+                 is_save_non_data_output=False,
+                 ):
         """
         Parse the file for logs and return self to query the file.
 
@@ -108,6 +111,7 @@ class Log:
             encoding -- encoding of the file. (default="utf8")
         """
         self.__encoding = "utf8"
+        self.__is_save_non_data_output = is_save_non_data_output
 
         # Enforce log_type to exist in log_start_format.
         log_type = log_type.lower()
@@ -346,6 +350,10 @@ class Log:
             line = file.readline()
             last_line = ''
             is_stop = False
+            # Boolean to determine if non-data should be saved to Notes.
+            # This becomes False after 'names' are read iff
+            # self.__save_non_data_output=False
+            is_save_more_notes = True
             # The list of column names will be filled in the loop.
             names = []
             # Initialize the data structure. Notes is the only known
@@ -385,12 +393,13 @@ class Log:
                 if line_minus_data or not line.strip():
                     # Line is just whitespace, or the sub'd line
                     # was non-empty,meaning this is not data.
-                    dat['Notes'] += line
-                    # Parse the header for date and time.
-                    if not dat['Date']:
-                        dat['Date'] = Log.__re_get(date_format, line)
-                    if not dat['Start Time']:
-                        dat['Start Time'] = Log.__re_get(time_format, line)
+                    if is_save_more_notes:
+                        dat['Notes'] += line
+                        # Parse the header for date and time.
+                        if not dat['Date']:
+                            dat['Date'] = Log.__re_get(date_format, line)
+                        if not dat['Start Time']:
+                            dat['Start Time'] = Log.__re_get(time_format, line)
                     last_line = line
                     line = file.readline()
                     continue
@@ -416,6 +425,8 @@ class Log:
                     names += ('',)
                     # Create a dictionary of lists (for each dataset).
                     dat['Data'].update({name: [] for name in names})
+                    if not self.__is_save_non_data_output:
+                        is_save_more_notes = False
 
                 # Group all unnamed data into a single list within a
                 # tuple while separating named data. The gatekeeper has
